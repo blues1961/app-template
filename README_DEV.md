@@ -60,6 +60,19 @@ make logs SERVICE=db
 make restart
 ```
 
+### Reconstruire les images
+
+```bash
+make rebuild
+```
+
+Ou pour un service précis :
+
+```bash
+make rebuild SERVICE=backend
+make rebuild SERVICE=frontend
+```
+
 ### Arrêter
 
 ```bash
@@ -150,6 +163,7 @@ Utiliser le `Makefile`, qui appelle les scripts standards :
 make init
 make up
 make down
+make rebuild
 make logs
 make ps
 ```

@@ -2,7 +2,7 @@
 
 SCRIPTS_DIR := ./scripts
 
-.PHONY: help init dev prod up down restart logs ps check
+.PHONY: help init dev prod up down restart rebuild logs ps check
 
 help:
 	@printf '%s\n' \
@@ -16,6 +16,7 @@ help:
 		'  up        Démarre les services de l’environnement actif' \
 		'  down      Arrête les services de l’environnement actif' \
 		'  restart   Redémarre les services de l’environnement actif' \
+		'  rebuild   Reconstruit les images (optionnel : make rebuild SERVICE=backend)' \
 		'  logs      Affiche les logs (optionnel : make logs SERVICE=backend)' \
 		'  ps        Affiche l’état des services de l’environnement actif' \
 		'  check     Vérifie les invariants du template'
@@ -37,6 +38,9 @@ down:
 
 restart:
 	$(SCRIPTS_DIR)/restart.sh
+
+rebuild:
+	$(SCRIPTS_DIR)/rebuild.sh $(SERVICE)
 
 logs:
 	$(SCRIPTS_DIR)/logs.sh $(SERVICE)

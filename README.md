@@ -64,6 +64,7 @@ Les opérations courantes passent par les scripts du dossier `scripts/` :
 ./scripts/up.sh
 ./scripts/down.sh
 ./scripts/restart.sh
+./scripts/rebuild.sh
 ./scripts/logs.sh
 ./scripts/ps.sh
 ./scripts/check-invariants.sh
