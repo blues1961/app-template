@@ -11,7 +11,15 @@ Ce fichier décrit le démarrage local en développement.
 Depuis la racine du projet :
 
 ```bash
-./scripts/init.sh
+make init
+```
+
+Le `Makefile` est la méthode recommandée pour les commandes courantes. Il délègue aux scripts standards du projet, qui restent la source de vérité.
+
+`make init` appelle :
+
+```bash
+./scripts/init.sh dev
 ```
 
 Ce script initialise le projet, prépare les fichiers d’environnement, valide les invariants et démarre les services Docker.
@@ -20,36 +28,42 @@ Ce script initialise le projet, prépare les fichiers d’environnement, valide 
 
 ## Commandes courantes
 
+### Aide
+
+```bash
+make help
+```
+
 ### Voir l’état des services
 
 ```bash
-./scripts/ps.sh
+make ps
 ```
 
 ### Voir les logs
 
 ```bash
-./scripts/logs.sh
+make logs
 ```
 
 Ou pour un service précis :
 
 ```bash
-./scripts/logs.sh backend
-./scripts/logs.sh frontend
-./scripts/logs.sh db
+make logs SERVICE=backend
+make logs SERVICE=frontend
+make logs SERVICE=db
 ```
 
 ### Redémarrer
 
 ```bash
-./scripts/restart.sh
+make restart
 ```
 
 ### Arrêter
 
 ```bash
-./scripts/down.sh
+make down
 ```
 
 ---
@@ -83,13 +97,13 @@ Le fichier `.env.local` ne doit jamais être commité.
 ### Développement
 
 ```bash
-./scripts/env-switch.sh dev
+make dev
 ```
 
 ### Production
 
 ```bash
-./scripts/env-switch.sh prod
+make prod
 ```
 
 ---
@@ -99,7 +113,7 @@ Le fichier `.env.local` ne doit jamais être commité.
 Normalement, cette étape est faite automatiquement par :
 
 ```bash
-./scripts/init.sh
+make init
 ```
 
 En cas de besoin :
@@ -121,7 +135,7 @@ Les secrets sont générés par :
 Pour vérifier que le projet respecte les invariants :
 
 ```bash
-./scripts/check-invariants.sh
+make check
 ```
 
 ---
@@ -130,14 +144,14 @@ Pour vérifier que le projet respecte les invariants :
 
 Les commandes Docker Compose ne devraient pas être tapées directement dans l’usage courant.
 
-Utiliser les scripts standards :
+Utiliser le `Makefile`, qui appelle les scripts standards :
 
 ```bash
-./scripts/init.sh
-./scripts/up.sh
-./scripts/down.sh
-./scripts/logs.sh
-./scripts/ps.sh
+make init
+make up
+make down
+make logs
+make ps
 ```
 
 ---
