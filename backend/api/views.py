@@ -2,4 +2,4 @@
 from django.http import JsonResponse
 
 def health(request):
-    return JsonResponse({"status": "ok", "app": "patate"})
+    return JsonResponse({"status": "ok", "app": "__APP_NAME__"})
