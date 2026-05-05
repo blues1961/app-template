@@ -71,6 +71,8 @@ replace_placeholder README_DEV.md "\*\*APP_NAME\*\*" "$APP_NAME"
 replace_placeholder README.md "__APP_NAME__" "$APP_NAME"
 replace_placeholder README_DEV.md "__APP_NAME__" "$APP_NAME"
 replace_placeholder backend/api/views.py "__APP_NAME__" "$APP_NAME"
+replace_placeholder frontend/index.html "__APP_NAME__" "$APP_NAME"
+replace_placeholder frontend/src/App.jsx "__APP_NAME__" "$APP_NAME"
 
 # Optionnel (fortement recommandé)
 replace_placeholder README.md "__APP_SLUG__" "$APP_SLUG"
