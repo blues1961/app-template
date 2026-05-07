@@ -77,6 +77,11 @@ replace_placeholder frontend/src/App.jsx "__APP_NAME__" "$APP_NAME"
 # Optionnel (fortement recommandé)
 replace_placeholder README.md "__APP_SLUG__" "$APP_SLUG"
 replace_placeholder README_DEV.md "__APP_SLUG__" "$APP_SLUG"
+echo "→ Remplacement des placeholders dans les scripts"
+
+find scripts -type f -name "*.sh" -exec sed -i "s/__APP_SLUG__/${APP_SLUG}/g" {} \;
+
+echo "✔ Placeholders remplacés"
 
 # -----------------------------
 # Vérification des invariants

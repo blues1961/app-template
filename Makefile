@@ -2,7 +2,7 @@
 
 SCRIPTS_DIR := ./scripts
 
-.PHONY: help init dev prod up down restart rebuild logs ps check
+.PHONY: help init dev prod up down restart rebuild logs ps check backup restore
 
 help:
 	@printf '%s\n' \
@@ -19,7 +19,15 @@ help:
 		'  rebuild   Reconstruit les images (optionnel : make rebuild SERVICE=backend)' \
 		'  logs      Affiche les logs (optionnel : make logs SERVICE=backend)' \
 		'  ps        Affiche l’état des services de l’environnement actif' \
-		'  check     Vérifie les invariants du template'
+		'  check     Vérifie les invariants du template' \
+		'  backup    Crée un backup PostgreSQL dans ./backup' \
+		'  restore   Restaure un backup PostgreSQL' \
+		'' \
+		'Options pour restore :' \
+		'  make restore' \
+		'            Restaure automatiquement le backup le plus récent trouvé dans ./backup' \
+		'  make restore FILE=./backup/__APP_SLUG___db-YYYYMMDD_HHMMSS.sql.gz' \
+		'            Restaure le fichier de backup spécifié'
 
 init:
 	$(SCRIPTS_DIR)/init.sh dev
@@ -50,3 +58,13 @@ ps:
 
 check:
 	$(SCRIPTS_DIR)/check-invariants.sh
+
+backup:
+	$(SCRIPTS_DIR)/backup-db.sh
+
+restore:
+	@if [ -n "$(FILE)" ]; then \
+		$(SCRIPTS_DIR)/restore-db.sh "$(FILE)"; \
+	else \
+		$(SCRIPTS_DIR)/restore-db.sh; \
+	fi

@@ -8,3 +8,6 @@ __pycache__/
 *.pyc
 *.log
 *.bak
+# Backups base de données
+backup/*
+!backup/.gitkeep
