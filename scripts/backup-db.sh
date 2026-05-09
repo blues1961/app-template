@@ -1,8 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-APP_SLUG="__APP_SLUG__"
 BACKUP_DIR="./backup"
+
+./scripts/check-invariants.sh >/dev/null
+
+set -a
+source .env
+if [ -f ".env.local" ]; then
+  source .env.local
+fi
+set +a
 
 mkdir -p "$BACKUP_DIR"
 

@@ -3,6 +3,15 @@ set -euo pipefail
 
 BACKUP_DIR="./backup"
 
+./scripts/check-invariants.sh >/dev/null
+
+set -a
+source .env
+if [ -f ".env.local" ]; then
+  source .env.local
+fi
+set +a
+
 if [ $# -eq 1 ]; then
   BACKUP_FILE="$1"
 else
