@@ -46,12 +46,27 @@ if [ "$CONFIRM" != "y" ] && [ "$CONFIRM" != "Y" ]; then
 fi
 
 echo "→ Restauration en cours..."
+echo "→ Réinitialisation du schéma public..."
+
+docker compose \
+  --env-file .env \
+  --env-file .env.local \
+  -f "docker-compose.${APP_ENV:-dev}.yml" \
+  exec -T db \
+  psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" "$POSTGRES_DB" <<SQL
+DROP SCHEMA IF EXISTS public CASCADE;
+CREATE SCHEMA public AUTHORIZATION "$POSTGRES_USER";
+GRANT ALL ON SCHEMA public TO "$POSTGRES_USER";
+GRANT ALL ON SCHEMA public TO PUBLIC;
+SQL
+
+echo "→ Import du backup..."
 
 gunzip -c "$BACKUP_FILE" | docker compose \
   --env-file .env \
   --env-file .env.local \
   -f "docker-compose.${APP_ENV:-dev}.yml" \
   exec -T db \
-  psql -U "$POSTGRES_USER" "$POSTGRES_DB"
+  psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" "$POSTGRES_DB"
 
 echo "✔ Restauration terminée."
