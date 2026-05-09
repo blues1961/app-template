@@ -2,7 +2,7 @@
 
 SCRIPTS_DIR := ./scripts
 
-.PHONY: help init dev prod up down restart rebuild logs ps check migrate backup restore
+.PHONY: help init dev prod up down restart rebuild logs ps check migrate update backup restore
 
 help:
 	@printf '%s\n' \
@@ -21,6 +21,7 @@ help:
 		'  ps        Affiche l’état des services de l’environnement actif' \
 		'  check     Vérifie les invariants du template' \
 		'  migrate   Applique les migrations Django dans l’environnement actif' \
+		'  update    Met à jour l’application dans l’environnement actif' \
 		'  backup    Crée un backup PostgreSQL dans ./backup' \
 		'  restore   Restaure un backup PostgreSQL' \
 		'' \
@@ -61,10 +62,10 @@ check:
 	$(SCRIPTS_DIR)/check-invariants.sh
 
 migrate:
-	@set -a; \
-	. ./.env; \
-	set +a; \
-	docker compose --env-file .env --env-file .env.local -f docker-compose.$${APP_ENV}.yml exec backend python manage.py migrate
+	$(SCRIPTS_DIR)/migrate.sh
+
+update:
+	$(SCRIPTS_DIR)/update.sh
 
 backup:
 	$(SCRIPTS_DIR)/backup-db.sh
