@@ -94,6 +94,21 @@ docker compose --env-file .env.prod -f docker-compose.prod.yml ps
 
 Ne propose pas de commande sans `--env-file`, sauf si tu expliques clairement pourquoi.
 
+Pour l’usage courant du projet, préfère toutefois les scripts standards et les cibles `make` déjà présentes plutôt que des commandes Docker Compose retapées à la main.
+
+Commandes usuelles :
+
+```bash
+make up
+make down
+make rebuild
+make migrate
+make backup
+make restore
+make update
+make ps
+```
+
 ---
 
 ## Objectif de départ
@@ -190,6 +205,40 @@ Procède dans cet ordre :
 
 ---
 
+## Workflow opératoire standard
+
+Quand le template fournit déjà les scripts de maintenance, n’invente pas un workflow parallèle.
+
+Règles :
+
+* pour démarrer ou relancer les services, utiliser `make up`, `make down`, `make restart`, `make ps` ;
+* pour les migrations Django, utiliser `make migrate` ;
+* pour un backup PostgreSQL, utiliser `make backup` ;
+* pour une restauration PostgreSQL, utiliser `make restore` ;
+* pour une mise à jour applicative complète, utiliser `make update` ;
+* si un comportement change, mettre à jour `README.md` et `README_DEV.md`.
+
+Séquence standard de mise à jour :
+
+1. `make backup`
+2. `git pull --ff-only`
+3. `make check`
+4. `make rebuild`
+5. `make up`
+6. `make migrate`
+7. `make ps`
+
+Ne remplace pas cette séquence par `make rebuild` seul : la reconstruction des images ne redémarre pas automatiquement les conteneurs.
+
+Restauration PostgreSQL :
+
+* considérer `make restore` comme destructif ;
+* le script recrée le schéma `public` avant import ;
+* il faut éviter de lancer une restauration sans prévenir clairement l’utilisateur ;
+* après une restauration, vérifier l’état des services et exécuter des validations pertinentes si nécessaire.
+
+---
+
 ## Ce qu’il ne faut pas faire
 
 Ne fais pas les actions suivantes sans demande explicite :
@@ -267,7 +316,7 @@ Mets à jour la documentation lorsque tu changes le comportement du projet.
 Fichiers à considérer :
 
 * `README.md` : vue d’ensemble, usage général, déploiement sommaire ;
-* `README_DEV.md` : procédure de développement locale ;
+* `README_DEV.md` : procédure de développement locale, backup, restore, migrate et update ;
 * `specification.md` : ne pas modifier sauf si demandé ;
 * `INVARIANTS.md` : ne modifier que si une convention officielle change ;
 * `AGENTS.md` : ne modifier que si les règles de travail de l’agent changent.

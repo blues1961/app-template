@@ -44,7 +44,7 @@ Ce projet sert de base pour une application auto-hébergée avec :
 Pour démarrer en développement :
 
 ```bash
-./scripts/init.sh
+make init
 ```
 
 Voir les détails dans :
@@ -68,6 +68,27 @@ Les opérations courantes passent par les scripts du dossier `scripts/` :
 ./scripts/logs.sh
 ./scripts/ps.sh
 ./scripts/check-invariants.sh
+./scripts/migrate.sh
+./scripts/backup-db.sh
+./scripts/restore-db.sh
+./scripts/update.sh
+```
+
+Le `Makefile` expose les cibles usuelles correspondantes :
+
+```bash
+make init
+make up
+make down
+make restart
+make rebuild
+make logs
+make ps
+make check
+make migrate
+make backup
+make restore
+make update
 ```
 
 ---
@@ -84,6 +105,75 @@ Le projet utilise :
 ```
 
 `.env.local` contient les secrets et ne doit jamais être commité.
+
+Rôle des fichiers :
+
+```text
+.env.dev      Variables non secrètes pour le développement
+.env.prod     Variables non secrètes pour la production
+.env.local    Secrets locaux non versionnés
+.env          Lien symbolique vers .env.dev ou .env.prod
+```
+
+En usage normal :
+
+```bash
+make dev
+make prod
+```
+
+Le template s’appuie sur l’environnement actif pointé par `.env` pour les commandes de maintenance comme `make migrate`, `make backup`, `make restore` et `make update`.
+
+---
+
+## Procédures standard
+
+Mise à jour des services :
+
+```bash
+make rebuild
+make up
+make migrate
+make ps
+```
+
+Backup PostgreSQL :
+
+```bash
+make backup
+```
+
+Restauration PostgreSQL :
+
+```bash
+make restore
+make restore FILE=./backup/__APP_SLUG___db-YYYYMMDD_HHMMSS.sql.gz
+```
+
+Attention :
+
+* `make restore` remplace les données actuelles de la base active ;
+* le script réinitialise le schéma `public` avant import ;
+* la restauration échoue au premier problème PostgreSQL ;
+* il est recommandé de faire un `make backup` avant toute restauration.
+
+Mise à jour applicative standard :
+
+```bash
+make update
+```
+
+La cible `update` exécute :
+
+1. `make backup`
+2. `git pull --ff-only`
+3. `make check`
+4. `make rebuild`
+5. `make up`
+6. `make migrate`
+7. `make ps`
+
+Cette procédure fonctionne en développement et en production tant que `.env` pointe vers le bon environnement et que le dépôt Git local est dans un état compatible avec `git pull --ff-only`.
 
 ---
 

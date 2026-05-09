@@ -34,6 +34,12 @@ Ce script initialise le projet, prépare les fichiers d’environnement, valide 
 make help
 ```
 
+### Démarrer les services
+
+```bash
+make up
+```
+
 ### Voir l’état des services
 
 ```bash
@@ -72,6 +78,69 @@ Ou pour un service précis :
 make rebuild SERVICE=backend
 make rebuild SERVICE=frontend
 ```
+
+Important :
+
+* `make rebuild` reconstruit les images mais ne redémarre pas à lui seul les conteneurs ;
+* après un rebuild, utiliser `make up` pour relancer les services avec les nouvelles images ;
+* si le backend change, exécuter ensuite `make migrate`.
+
+### Appliquer les migrations
+
+```bash
+make migrate
+```
+
+Cette cible exécute `python manage.py migrate` dans le service `backend` de l’environnement actif.
+
+### Backup PostgreSQL
+
+```bash
+make backup
+```
+
+Le backup est écrit dans `./backup/` avec un nom de la forme :
+
+```text
+__APP_SLUG___db-YYYYMMDD_HHMMSS.sql.gz
+```
+
+### Restaurer un backup PostgreSQL
+
+```bash
+make restore
+make restore FILE=./backup/__APP_SLUG___db-YYYYMMDD_HHMMSS.sql.gz
+```
+
+Comportement :
+
+* le backup le plus récent est utilisé si `FILE` n’est pas fourni ;
+* une confirmation interactive est demandée ;
+* le schéma `public` est recréé avant import ;
+* la restauration remplace les données actuelles de la base active ;
+* la commande s’arrête au premier incident PostgreSQL.
+
+### Mise à jour standard de l’application
+
+```bash
+make update
+```
+
+Séquence exécutée :
+
+1. `make backup`
+2. `git pull --ff-only`
+3. `make check`
+4. `make rebuild`
+5. `make up`
+6. `make migrate`
+7. `make ps`
+
+Prérequis :
+
+* `.env` doit pointer vers le bon environnement ;
+* l’arbre Git local doit permettre `git pull --ff-only` ;
+* Docker et les services requis doivent être disponibles.
 
 ### Arrêter
 
@@ -119,6 +188,17 @@ make dev
 make prod
 ```
 
+Le lien symbolique `.env` détermine l’environnement actif utilisé par :
+
+```bash
+make up
+make rebuild
+make migrate
+make backup
+make restore
+make update
+```
+
 ---
 
 ## Génération des environnements
@@ -164,8 +244,12 @@ make init
 make up
 make down
 make rebuild
+make migrate
 make logs
 make ps
+make backup
+make restore
+make update
 ```
 
 ---
@@ -192,4 +276,16 @@ Codex doit respecter les règles suivantes :
 ./scripts/env-switch.sh dev
 ./scripts/check-invariants.sh
 ./scripts/up.sh
+```
+
+Une mise à jour manuelle équivalente à `make update` correspond à :
+
+```bash
+./scripts/backup-db.sh
+git pull --ff-only
+./scripts/check-invariants.sh
+./scripts/rebuild.sh
+./scripts/up.sh
+./scripts/migrate.sh
+./scripts/ps.sh
 ```
