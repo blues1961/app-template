@@ -20,6 +20,7 @@ help:
 		'  logs      Affiche les logs (optionnel : make logs SERVICE=backend)' \
 		'  ps        Affiche l’état des services de l’environnement actif' \
 		'  check     Vérifie les invariants du template' \
+		'  migrate   fais les migrations Django'\
 		'  backup    Crée un backup PostgreSQL dans ./backup' \
 		'  restore   Restaure un backup PostgreSQL' \
 		'' \
@@ -58,6 +59,9 @@ ps:
 
 check:
 	$(SCRIPTS_DIR)/check-invariants.sh
+
+migrate:
+	docker compose --env-file .env.prod --env-file .env.local -f docker-compose.prod.yml exec backend python manage.py migrate
 
 backup:
 	$(SCRIPTS_DIR)/backup-db.sh
