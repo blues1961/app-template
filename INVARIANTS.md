@@ -54,8 +54,8 @@ Structure obligatoire :
 
 Règles :
 
-.env.template.example est versionné ;
-.env.template est local et n’est jamais versionné ;
+* `.env.template.example` est versionné ;
+* `.env.template` est local et n’est jamais versionné ;
 * `.env.dev` est versionné ;
 * `.env.prod` est versionné ;
 * `.env.local` n’est jamais versionné ;
@@ -164,27 +164,34 @@ con_frontend_dev
 
 ## 8. Scripts obligatoires
 
-Le dossier `scripts/` doit contenir au minimum :
+Le dossier `scripts/` doit contenir exactement les 15 scripts standards du template applicatif :
 
 ```text
 scripts/
-├── env-switch.sh
+├── backup-db.sh
 ├── check-invariants.sh
-├── up.sh
 ├── down.sh
-├── restart.sh
+├── env-switch.sh
+├── generate-env.sh
+├── generate-secrets.sh
+├── init.sh
 ├── logs.sh
-└── ps.sh
+├── migrate.sh
+├── ps.sh
+├── rebuild.sh
+├── restart.sh
+├── restore-db.sh
+├── up.sh
+└── update.sh
 ```
 
+Aucun script standard du template ne doit manquer ou être remplacé par une variante parallèle.
 Le changement d’environnement doit se faire avec :
 
 ```bash
 ./scripts/env-switch.sh dev
 ./scripts/env-switch.sh prod
 ```
-
----
 
 ## 9. Commandes Docker
 
