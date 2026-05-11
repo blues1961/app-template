@@ -212,8 +212,35 @@ make init
 En cas de besoin :
 
 ```bash
+cp .env.template.example .env.template
+```
+
+Puis remplir les variables d’identité du projet dans `.env.template` :
+
+```bash
+APP_NAME=
+APP_SLUG=
+APP_DEPOT=
+APP_NO=
+```
+
+Ensuite :
+
+```bash
 ./scripts/generate-env.sh
 ```
+
+`./scripts/generate-env.sh` lit uniquement l’identité du projet depuis `.env.template`, puis régénère `.env.dev` et `.env.prod` et y recalcule notamment :
+
+* `POSTGRES_USER` et `POSTGRES_DB` à partir de `APP_SLUG` ;
+* `DEV_DB_PORT`, `DEV_VITE_PORT` et `DEV_API_PORT` à partir de `APP_NO` ;
+* `DJANGO_ALLOWED_HOSTS` et `DJANGO_CSRF_TRUSTED_ORIGINS` pour les environnements dev et prod ;
+* `VITE_API_BASE` ainsi que les variables de stack non secrètes du template.
+
+Le script crée aussi `.env.local` si nécessaire et ajoute sans écraser les clés manquantes suivantes :
+
+* `ADMIN_USERNAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`
+* `POSTGRES_PASSWORD`, `DJANGO_SECRET_KEY`
 
 Les secrets sont générés par :
 

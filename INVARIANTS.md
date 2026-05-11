@@ -44,6 +44,8 @@ Règles :
 Structure obligatoire :
 
 ```text
+.env.template.example
+.env.template
 .env.dev
 .env.prod
 .env.local
@@ -52,6 +54,8 @@ Structure obligatoire :
 
 Règles :
 
+.env.template.example est versionné ;
+.env.template est local et n’est jamais versionné ;
 * `.env.dev` est versionné ;
 * `.env.prod` est versionné ;
 * `.env.local` n’est jamais versionné ;
@@ -318,6 +322,7 @@ Le projet doit ignorer au minimum :
 ```gitignore
 .env
 .env.local
+.env.template
 *.bak
 *.backup
 *.tmp

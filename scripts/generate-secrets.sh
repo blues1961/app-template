@@ -7,14 +7,14 @@ if [ ! -f ".env.template" ]; then
   echo "ERREUR: .env.template est absent."
   echo "Copiez d'abord .env.template.example :"
   echo "  cp .env.template.example .env.template"
-  echo "Puis modifiez APP_NAME, APP_SLUG, APP_DEPOT, APP_NO et APP_HOST."
+  echo "Puis modifiez APP_NAME, APP_SLUG, APP_DEPOT et APP_NO."
   exit 1
 fi
 
 if [ ! -f "$ENV_LOCAL" ]; then
   echo "Erreur: .env.local introuvable."
   echo "Créer d'abord le fichier avec :"
-  echo "  cp .env.local.example .env.local"
+  echo "  ./scripts/generate-env.sh"
   exit 1
 fi
 

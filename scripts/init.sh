@@ -12,19 +12,48 @@ err()  { echo -e "\033[1;31m✖ $1\033[0m"; exit 1; }
 # -----------------------------
 # Vérifications de base
 # -----------------------------
-[ -f ".env.template" ] || err ".env.template introuvable"
+[ -f ".env.template" ] || err ".env.template introuvable. Copie d'abord .env.template.example vers .env.template"
+
+TARGET_ENV="${1:-dev}"
+
+if [ "$TARGET_ENV" != "dev" ] && [ "$TARGET_ENV" != "prod" ]; then
+  err "Usage: ./scripts/init.sh [dev|prod]"
+fi
 
 # -----------------------------
 # Chargement du template (source de vérité)
 # -----------------------------
+load_template() {
+  local file="$1"
+  local line key value
+
+  while IFS= read -r line || [ -n "$line" ]; do
+    case "$line" in
+      ''|\#*)
+        continue
+        ;;
+    esac
+
+    key=${line%%=*}
+    value=${line#*=}
+    key=$(printf '%s' "$key" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
+    value=$(printf '%s' "$value" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
+
+    if [ -n "$key" ]; then
+      printf -v "$key" '%s' "$value"
+      export "$key"
+    fi
+  done < "$file"
+}
+
 log "Chargement de .env.template"
-set -a
-source .env.template
-set +a
+load_template .env.template
 
 # Validation minimale
 [ -n "${APP_NAME:-}" ] || err "APP_NAME non défini dans .env.template"
 [ -n "${APP_SLUG:-}" ] || err "APP_SLUG non défini dans .env.template"
+[ -n "${APP_DEPOT:-}" ] || err "APP_DEPOT non défini dans .env.template"
+[ -n "${APP_NO:-}" ] || err "APP_NO non défini dans .env.template"
 
 ok "Template chargé (${APP_NAME})"
 
@@ -36,12 +65,11 @@ log "Génération des fichiers d'environnement"
 ok ".env générés"
 
 # -----------------------------
-# Création du lien symbolique (.env -> .env.dev)
+# Création du lien symbolique (.env -> .env.dev|.env.prod)
 # -----------------------------
-log "Configuration de l'environnement actif (dev)"
-
-ln -sf .env.dev .env
-ok ".env → .env.dev"
+log "Configuration de l'environnement actif (${TARGET_ENV})"
+./scripts/env-switch.sh "$TARGET_ENV"
+ok ".env → .env.${TARGET_ENV}"
 
 # -----------------------------
 # Fonction templating sécurisée
@@ -70,6 +98,7 @@ replace_placeholder README.md "\*\*APP_NAME\*\*" "$APP_NAME"
 replace_placeholder README_DEV.md "\*\*APP_NAME\*\*" "$APP_NAME"
 replace_placeholder README.md "__APP_NAME__" "$APP_NAME"
 replace_placeholder README_DEV.md "__APP_NAME__" "$APP_NAME"
+replace_placeholder Makefile "__APP_SLUG__" "$APP_SLUG"
 replace_placeholder backend/api/views.py "__APP_NAME__" "$APP_NAME"
 replace_placeholder frontend/index.html "__APP_NAME__" "$APP_NAME"
 replace_placeholder frontend/src/App.jsx "__APP_NAME__" "$APP_NAME"

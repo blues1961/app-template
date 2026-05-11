@@ -57,4 +57,10 @@ else
   fail ".gitignore doit ignorer .env.local"
 fi
 
+if grep -q "^\.env.template$" .gitignore 2>/dev/null; then
+  true
+else
+  fail ".gitignore doit ignorer .env.template"
+fi
+
 echo "OK: invariants valides pour APP_ENV=$APP_ENV"
