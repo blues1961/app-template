@@ -22,6 +22,20 @@ generate_secret() {
   openssl rand -base64 48 | tr -d '\n'
 }
 
+read_template_value() {
+  local key="$1"
+
+  sed -n "s/^${key}=//p" .env.template | tail -n 1
+}
+
+normalize_app_depot() {
+  local depot="$1"
+
+  printf '%s' "$depot" \
+    | tr '[:lower:]' '[:upper:]' \
+    | sed 's/[^A-Z0-9]/_/g'
+}
+
 set_value_if_empty() {
   local key="$1"
   local value="$2"
@@ -33,8 +47,18 @@ set_value_if_empty() {
   fi
 }
 
+APP_DEPOT="$(read_template_value APP_DEPOT)"
+[ -n "$APP_DEPOT" ] || {
+  echo "ERREUR: APP_DEPOT est absent de .env.template."
+  exit 1
+}
+
+LOCAL_API_TOKEN_KEY="$(normalize_app_depot "$APP_DEPOT")_API_TOKEN"
+
 set_value_if_empty "POSTGRES_PASSWORD" "$(generate_secret)"
 set_value_if_empty "DJANGO_SECRET_KEY" "$(generate_secret)"
+set_value_if_empty "$LOCAL_API_TOKEN_KEY" "$(generate_secret)"
 
 echo "Secrets générés dans .env.local"
 echo "Vérifie ensuite ADMIN_USERNAME, ADMIN_EMAIL et ADMIN_PASSWORD."
+echo "Le token local ${LOCAL_API_TOKEN_KEY} a été généré si nécessaire."

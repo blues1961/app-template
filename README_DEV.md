@@ -252,12 +252,20 @@ Le script crée aussi `.env.local` si nécessaire et ajoute sans écraser les cl
 
 * `ADMIN_USERNAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`
 * `POSTGRES_PASSWORD`, `DJANGO_SECRET_KEY`
+* `<APP_DEPOT_NORMALISE>_API_TOKEN`
 
 Les secrets sont générés par :
 
 ```bash
 ./scripts/generate-secrets.sh
 ```
+
+Règles :
+
+* le token local inter-apps de l'application courante est dérivé de `APP_DEPOT` ;
+* ce token suit la convention `<APP_DEPOT_NORMALISE>_API_TOKEN` ;
+* il est créé automatiquement dans `.env.local` s'il est absent ;
+* si l'application appelle une autre application hôte, la copie du token de l'hôte doit aussi être ajoutée manuellement dans `.env.local` sous le même nom canonique.
 
 ---
 
