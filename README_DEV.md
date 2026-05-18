@@ -136,6 +136,52 @@ Séquence exécutée :
 6. `make migrate`
 7. `make ps`
 
+### Règle sur les migrations
+
+Le conteneur `backend` ne doit pas exécuter automatiquement `python manage.py migrate` au démarrage.
+
+Les migrations doivent être déclenchées explicitement via :
+
+```bash
+make migrate
+```
+
+ou via la séquence complète :
+
+```bash
+make prod
+git pull --ff-only
+make check
+make rebuild
+make up
+make migrate
+make ps
+```
+
+Pourquoi :
+
+* `make up` démarre les services, mais ne doit pas modifier le schéma de la base ;
+* `make migrate` reste la source de vérité pour les migrations ;
+* cette séparation évite les conflits de migration et les courses au démarrage.
+
+### Règle sur les secrets en production
+
+Le fichier `.env.local` doit être présent sur le serveur avant le premier démarrage réel en production.
+
+Il doit contenir au minimum les secrets requis, notamment :
+
+* `POSTGRES_PASSWORD`
+* `DJANGO_SECRET_KEY`
+* `JWT_SECRET`
+* `ADMIN_USERNAME`
+* `ADMIN_EMAIL`
+* `ADMIN_PASSWORD`
+
+Important :
+
+* changer `POSTGRES_PASSWORD` dans `.env.local` ne modifie pas automatiquement le mot de passe stocké dans une base PostgreSQL déjà initialisée ;
+* si le volume PostgreSQL existe déjà, la valeur de `.env.local` doit rester cohérente avec le mot de passe attendu par cette base.
+
 Prérequis :
 
 * `.env` doit pointer vers le bon environnement avant `make init` ;
