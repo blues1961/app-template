@@ -124,9 +124,10 @@ Le MVP doit inclure :
 5. une authentification minimale si demandée par la spécification ;
 6. un compte administrateur géré à partir des variables d’environnement ;
 7. les écrans et endpoints nécessaires au cœur du MVP ;
-8. une documentation mise à jour ;
-9. des scripts fonctionnels dans `scripts/` ;
-10. une vérification finale avec les commandes Docker Compose appropriées.
+8. un écran de login cohérent avec le thème commun dans `docs/THEME.md` ;
+9. une documentation mise à jour ;
+10. des scripts fonctionnels dans `scripts/` ;
+11. une vérification finale avec les commandes Docker Compose appropriées.
 
 ---
 

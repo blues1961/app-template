@@ -183,6 +183,7 @@ Cette procédure fonctionne en développement et en production tant que `.env` p
 * `INVARIANTS.md` : conventions obligatoires du projet
 * `AGENTS.md` : instructions générales pour les agents IA
 * `CODEX_START.md` : point de départ pour Codex
+* `docs/THEME.md` : thème commun, assets partagés et structure de login
 * `docs/` : documentation complémentaire
 
 ---
