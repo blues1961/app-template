@@ -11,3 +11,4 @@ __pycache__/
 # Backups base de données
 backup/*
 !backup/.gitkeep
+.project-assistant/
