@@ -1,5 +1,46 @@
 # INVARIANTS.md
 
+## Autorité et règles de modification
+
+Ce document constitue la référence canonique des invariants globaux des applications auto-hébergées.
+
+Les outils automatisés et agents logiciels, notamment Codex, ChatGPT, Claude, Gemini ou tout autre assistant, doivent considérer ces invariants comme protégés.
+
+Un agent ne doit jamais, de sa propre initiative :
+
+- modifier un invariant existant ;
+- supprimer un invariant ;
+- assouplir un invariant ;
+- contourner un invariant ;
+- remplacer une convention canonique par une autre convention ;
+- adapter les invariants globaux aux particularités d’un seul projet.
+
+Un agent peut uniquement :
+
+- vérifier la conformité d’un projet ;
+- signaler un écart ;
+- proposer une correction du projet afin de respecter les invariants ;
+- proposer un nouvel invariant ;
+- proposer une évolution clairement justifiée d’un invariant existant.
+
+Toute création, modification, suppression ou dérogation concernant un invariant global nécessite l’autorisation explicite du propriétaire du dépôt.
+
+Une proposition de changement doit préciser :
+
+1. l’invariant concerné ;
+2. la justification du changement ;
+3. les projets touchés ;
+4. les risques de compatibilité ou de migration ;
+5. les modifications nécessaires dans `app-template` ;
+6. les modifications nécessaires dans les applications existantes.
+
+En cas de contradiction entre le code d’une application et ce document, les invariants prévalent. L’application doit être corrigée, sauf dérogation explicitement autorisée et documentée par le propriétaire.
+
+Un projet doit s’adapter aux invariants globaux. Les invariants globaux ne doivent jamais être adaptés automatiquement à un projet particulier.
+
+---
+
+
 ## Rôle
 
 Ce fichier est le contrat technique du projet.

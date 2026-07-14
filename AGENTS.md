@@ -594,5 +594,13 @@ L’objectif est de standardiser :
 * la documentation ;
 * les futures interactions avec Codex.
 
+## Protection des invariants globaux
 
+`INVARIANTS.md` constitue le contrat technique canonique du projet et de l’écosystème des applications auto-hébergées.
+
+Aucun agent ne doit modifier, supprimer, assouplir ou contourner un invariant sans autorisation explicite du propriétaire.
+
+Lorsqu’un projet ne respecte pas un invariant, l’agent doit corriger le projet ou signaler l’écart. Il ne doit pas modifier l’invariant pour l’adapter au projet.
+
+Toute proposition d’évolution d’un invariant doit être présentée séparément, avec sa justification, ses impacts et les migrations nécessaires. Elle ne doit jamais être appliquée automatiquement.
 

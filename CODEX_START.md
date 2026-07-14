@@ -373,3 +373,14 @@ Sois précis. Ne masque pas les erreurs. Si une commande échoue, indique la cau
 Ce dépôt sert à produire une application auto-hébergée fiable, maintenable et cohérente avec les autres applications de Sylvain.
 
 La priorité est la stabilité du template, la cohérence des invariants, la sécurité des secrets et la livraison progressive d’un MVP fonctionnel.
+
+## Règle absolue sur les invariants
+
+Avant toute modification, lire `INVARIANTS.md`.
+
+Les invariants globaux sont protégés. Tu ne dois jamais les modifier, les supprimer, les assouplir ou les contourner sans autorisation explicite du propriétaire.
+
+Si le code contredit un invariant, corrige le code. Ne modifie pas l’invariant pour justifier l’état actuel du projet.
+
+Une évolution possible d’un invariant doit être présentée comme une proposition distincte et ne doit pas être appliquée sans validation explicite.
+
