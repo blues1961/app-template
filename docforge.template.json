@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "template_id": "app-template",
+  "project_kind": "application-template",
+  "base_profile": "django-react",
+  "template_version": null,
+  "make_targets": [
+    {
+      "name": "help",
+      "origin": "app-template",
+      "audience": "operator",
+      "reference_level": "primary",
+      "environment": ["dev", "prod"],
+      "destructive": false,
+      "destructive_effects": [],
+      "documentation_policy": "main-reference",
+      "description": "Affiche l’aide Make principale du modèle."
+    },
+    {
+      "name": "init",
+      "origin": "app-template",
+      "audience": "operator",
+      "reference_level": "primary",
+      "environment": ["dev", "prod"],
+      "destructive": false,
+      "destructive_effects": [],
+      "documentation_policy": "quick-start",
+      "description": "Initialise les fichiers d’environnement, secrets locaux et services de base."
+    },
+    {
+      "name": "dev",
+      "origin": "app-template",
+      "audience": "operator",
+      "reference_level": "primary",
+      "environment": ["dev"],
+      "destructive": false,
+      "destructive_effects": [],
+      "documentation_policy": "quick-start",
+      "description": "Pointe l’environnement actif vers .env.dev."
+    },
+    {
+      "name": "prod",
+      "origin": "app-template",
+      "audience": "operator",
+      "reference_level": "advanced",
+      "environment": ["prod"],
+      "destructive": false,
+      "destructive_effects": [],
+      "documentation_policy": "advanced-reference",
+      "description": "Pointe l’environnement actif vers .env.prod."
+    },
+    {
+      "name": "up",
+      "origin": "app-template",
+      "audience": "operator",
+      "reference_level": "primary",
+      "environment": ["dev", "prod"],
+      "destructive": false,
+      "destructive_effects": [],
+      "documentation_policy": "quick-start",
+      "description": "Démarre les services de l’environnement actif."
+    },
+    {
+      "name": "down",
+      "origin": "app-template",
+      "audience": "operator",
+      "reference_level": "primary",
+      "environment": ["dev", "prod"],
+      "destructive": true,
+      "destructive_effects": ["Arrêt des services actifs"],
+      "documentation_policy": "main-reference",
+      "description": "Arrête les services de l’environnement actif."
+    },
+    {
+      "name": "restart",
+      "origin": "app-template",
+      "audience": "operator",
+      "reference_level": "primary",
+      "environment": ["dev", "prod"],
+      "destructive": true,
+      "destructive_effects": ["Arrêt puis redémarrage des services actifs"],
+      "documentation_policy": "main-reference",
+      "description": "Redémarre les services de l’environnement actif."
+    },
+    {
+      "name": "rebuild",
+      "origin": "app-template",
+      "audience": "operator",
+      "reference_level": "advanced",
+      "environment": ["dev", "prod"],
+      "destructive": true,
+      "destructive_effects": ["Reconstruction des images ou services"],
+      "documentation_policy": "advanced-reference",
+      "description": "Reconstruit les images, avec SERVICE optionnel lorsqu’il est démontré."
+    },
+    {
+      "name": "logs",
+      "origin": "app-template",
+      "audience": "operator",
+      "reference_level": "primary",
+      "environment": ["dev", "prod"],
+      "destructive": false,
+      "destructive_effects": [],
+      "documentation_policy": "main-reference",
+      "description": "Affiche les journaux des services."
+    },
+    {
+      "name": "ps",
+      "origin": "app-template",
+      "audience": "operator",
+      "reference_level": "primary",
+      "environment": ["dev", "prod"],
+      "destructive": false,
+      "destructive_effects": [],
+      "documentation_policy": "main-reference",
+      "description": "Affiche l’état des services."
+    },
+    {
+      "name": "check",
+      "origin": "app-template",
+      "audience": "operator",
+      "reference_level": "advanced",
+      "environment": ["dev", "prod"],
+      "destructive": false,
+      "destructive_effects": [],
+      "documentation_policy": "advanced-reference",
+      "description": "Vérifie les invariants du template."
+    },
+    {
+      "name": "migrate",
+      "origin": "app-template",
+      "audience": "operator",
+      "reference_level": "advanced",
+      "environment": ["dev", "prod"],
+      "destructive": false,
+      "destructive_effects": [],
+      "documentation_policy": "main-reference",
+      "description": "Applique les migrations Django dans l’environnement actif."
+    },
+    {
+      "name": "update",
+      "origin": "app-template",
+      "audience": "operator",
+      "reference_level": "advanced",
+      "environment": ["dev", "prod"],
+      "destructive": true,
+      "destructive_effects": ["Mise à jour Git et reconstruction de l’environnement"],
+      "documentation_policy": "advanced-reference",
+      "description": "Exécute la séquence standard de mise à jour du modèle."
+    },
+    {
+      "name": "backup",
+      "origin": "app-template",
+      "audience": "operator",
+      "reference_level": "advanced",
+      "environment": ["dev", "prod"],
+      "destructive": false,
+      "destructive_effects": [],
+      "documentation_policy": "advanced-reference",
+      "description": "Crée une sauvegarde PostgreSQL dans ./backup."
+    },
+    {
+      "name": "restore",
+      "origin": "app-template",
+      "audience": "operator",
+      "reference_level": "advanced",
+      "environment": ["dev", "prod"],
+      "destructive": true,
+      "destructive_effects": ["Modification ou écrasement potentiel des données PostgreSQL"],
+      "documentation_policy": "advanced-reference",
+      "description": "Restaure une sauvegarde PostgreSQL."
+    }
+  ]
+}
