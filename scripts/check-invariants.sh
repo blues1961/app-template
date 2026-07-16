@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+EXPECT_APPLICATION=0
+if [ "${1:-}" = "--expect-application" ]; then
+  EXPECT_APPLICATION=1
+fi
+
 fail() {
   echo "ERREUR: $1"
   exit 1
@@ -61,6 +66,12 @@ if grep -q "^\.env.template$" .gitignore 2>/dev/null; then
   true
 else
   fail ".gitignore doit ignorer .env.template"
+fi
+
+if [ "$EXPECT_APPLICATION" -eq 1 ]; then
+  ./scripts/docforge-project-metadata.py validate --expect-application
+else
+  ./scripts/docforge-project-metadata.py validate
 fi
 
 echo "OK: invariants valides pour APP_ENV=$APP_ENV"

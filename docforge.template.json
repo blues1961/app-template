@@ -3,7 +3,7 @@
   "template_id": "app-template",
   "project_kind": "application-template",
   "base_profile": "django-react",
-  "template_version": null,
+  "template_version": "0.1.0",
   "make_targets": [
     {
       "name": "help",

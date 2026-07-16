@@ -103,6 +103,13 @@ if [ -z "$APP_HOST_TEMPLATE" ]; then
 fi
 
 # Calcul ports
+quote_env_value() {
+  local value="$1"
+  printf "'%s'" "$(printf '%s' "$value" | sed "s/'/'\"'\"'/g")"
+}
+
+APP_NAME_ENV=$(quote_env_value "$APP_NAME")
+
 DEV_DB_PORT=$((5432 + APP_NO))
 DEV_VITE_PORT=$((5173 + APP_NO))
 DEV_API_PORT=$((8000 + APP_NO + 1))
@@ -145,7 +152,7 @@ PROD_DJANGO_CSRF_TRUSTED_ORIGINS=$(append_csv_value "$PROD_DJANGO_CSRF_TRUSTED_O
 cat > .env.dev <<EOF
 APP_ENV=dev
 
-APP_NAME=$APP_NAME
+APP_NAME=$APP_NAME_ENV
 APP_SLUG=$APP_SLUG
 APP_DEPOT=$APP_DEPOT
 APP_NO=$APP_NO
@@ -171,7 +178,7 @@ echo "✔ .env.dev généré"
 cat > .env.prod <<EOF
 APP_ENV=prod
 
-APP_NAME=$APP_NAME
+APP_NAME=$APP_NAME_ENV
 APP_SLUG=$APP_SLUG
 APP_DEPOT=$APP_DEPOT
 APP_NO=$APP_NO
