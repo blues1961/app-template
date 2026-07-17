@@ -2,15 +2,17 @@
 
 Application basée sur les invariants standards du template applicatif.
 
-Ce fichier décrit le démarrage local en développement.
+Ce fichier décrit le démarrage local, la matérialisation d’une copie du template et les commandes développeur.
 
 ---
 
 ## Démarrage rapide
 
-Depuis la racine du projet :
+Depuis une copie du dépôt :
 
 ```bash
+cp .env.template.example .env.template
+make dev
 make init
 ```
 
@@ -23,6 +25,48 @@ Le `Makefile` est la méthode recommandée pour les commandes courantes. Il dél
 ```
 
 Ce script lit `.env.template`, respecte le lien `.env` déjà en place, génère ou complète les fichiers d’environnement, valide les invariants et ne démarre les services que si nécessaire.
+
+---
+
+## Matérialiser une application
+
+Le dépôt source du template conserve `.app-template/template.json`.
+
+Quand une copie doit devenir une application indépendante, la matérialisation doit être explicitement demandée :
+
+```bash
+APP_TEMPLATE_MATERIALIZE=1 make init
+```
+
+Effets :
+
+* validation de l’identité dans `.env.template` ;
+* remplacement de `__APP_NAME__` et `__APP_SLUG__` ;
+* écriture de `.app-template/origin.json` ;
+* suppression de la métadonnée de template active ;
+* vérification finale de l’état applicatif.
+
+Pour réinitialiser explicitement l’historique Git après matérialisation :
+
+```bash
+APP_TEMPLATE_MATERIALIZE=1 APP_TEMPLATE_DETACH_GIT=1 make init
+```
+
+Protections :
+
+* la matérialisation du dépôt source `app-template` est refusée par défaut ;
+* le détachement Git n’a lieu que si `APP_TEMPLATE_DETACH_GIT=1` ;
+* un état ambigu entre template et application est refusé ;
+* les placeholders restants bloquent la validation.
+
+Variables de compatibilité héritée :
+
+* `DOCFORGE_INIT_APPLICATION`
+* `DOCFORGE_DETACH_GIT`
+* `DOCFORGE_ALLOW_SOURCE_NAME`
+* `DOCFORGE_SKIP_STARTUP`
+
+Ces variables sont encore acceptées temporairement, mais les variables `APP_TEMPLATE_*` sont prioritaires et le flux normal ne doit plus les documenter comme premier choix.
 
 ---
 
@@ -93,16 +137,25 @@ make migrate
 
 Cette cible exécute `python manage.py migrate` dans le service `backend` de l’environnement actif.
 
+### Validation structurelle
+
+```bash
+make check
+```
+
+`make check` valide les invariants structurels du modèle, notamment :
+
+* cohérence de `APP_NAME`, `APP_SLUG`, `APP_DEPOT` et `APP_NO` ;
+* ports dérivés de `APP_NO` ;
+* conventions PostgreSQL ;
+* validité du lien `.env` ;
+* état des métadonnées `.app-template/*` ;
+* absence de placeholders restants lorsque le dépôt est matérialisé.
+
 ### Backup PostgreSQL
 
 ```bash
 make backup
-```
-
-Le backup est écrit dans `./backup/` avec un nom de la forme :
-
-```text
-__APP_SLUG___db-YYYYMMDD_HHMMSS.sql.gz
 ```
 
 ### Restaurer un backup PostgreSQL
@@ -136,64 +189,6 @@ Séquence exécutée :
 6. `make migrate`
 7. `make ps`
 
-### Règle sur les migrations
-
-Le conteneur `backend` ne doit pas exécuter automatiquement `python manage.py migrate` au démarrage.
-
-Les migrations doivent être déclenchées explicitement via :
-
-```bash
-make migrate
-```
-
-ou via la séquence complète :
-
-```bash
-make prod
-git pull --ff-only
-make check
-make rebuild
-make up
-make migrate
-make ps
-```
-
-Pourquoi :
-
-* `make up` démarre les services, mais ne doit pas modifier le schéma de la base ;
-* `make migrate` reste la source de vérité pour les migrations ;
-* cette séparation évite les conflits de migration et les courses au démarrage.
-
-### Règle sur les secrets en production
-
-Le fichier `.env.local` doit être présent sur le serveur avant le premier démarrage réel en production.
-
-Il doit contenir au minimum les secrets requis, notamment :
-
-* `POSTGRES_PASSWORD`
-* `DJANGO_SECRET_KEY`
-* `JWT_SECRET`
-* `ADMIN_USERNAME`
-* `ADMIN_EMAIL`
-* `ADMIN_PASSWORD`
-
-Important :
-
-* changer `POSTGRES_PASSWORD` dans `.env.local` ne modifie pas automatiquement le mot de passe stocké dans une base PostgreSQL déjà initialisée ;
-* si le volume PostgreSQL existe déjà, la valeur de `.env.local` doit rester cohérente avec le mot de passe attendu par cette base.
-
-Prérequis :
-
-* `.env` doit pointer vers le bon environnement avant `make init` ;
-* l’arbre Git local doit permettre `git pull --ff-only` ;
-* Docker et les services requis doivent être disponibles.
-
-### Arrêter
-
-```bash
-make down
-```
-
 ---
 
 ## Environnements
@@ -201,6 +196,7 @@ make down
 Le projet utilise :
 
 ```text
+.env.template
 .env.dev
 .env.prod
 .env.local
@@ -210,10 +206,11 @@ Le projet utilise :
 Rôle des fichiers :
 
 ```text
-.env.dev      Variables non secrètes pour le développement
-.env.prod     Variables non secrètes pour la production
-.env.local    Secrets locaux non versionnés
-.env          Lien symbolique vers .env.dev ou .env.prod
+.env.template  Identité locale du projet avant génération
+.env.dev       Variables non secrètes pour le développement
+.env.prod      Variables non secrètes pour la production
+.env.local     Secrets locaux non versionnés
+.env           Lien symbolique vers .env.dev ou .env.prod
 ```
 
 Le fichier `.env.local` ne doit jamais être commité.
@@ -285,6 +282,7 @@ Ensuite :
 
 ```bash
 ./scripts/generate-env.sh
+./scripts/generate-secrets.sh
 ```
 
 `./scripts/generate-env.sh` lit l’identité du projet et les variables `ADMIN_*` de bootstrap depuis `.env.template`, puis régénère `.env.dev` et `.env.prod` et y recalcule notamment :
@@ -306,57 +304,6 @@ Les secrets sont générés par :
 ./scripts/generate-secrets.sh
 ```
 
-Règles :
-
-* le token local inter-apps de l'application courante est dérivé de `APP_DEPOT` ;
-* ce token suit la convention `<APP_DEPOT_NORMALISE>_API_TOKEN` ;
-* il est créé automatiquement dans `.env.local` s'il est absent ;
-* si l'application appelle une autre application hôte, la copie du token de l'hôte doit aussi être ajoutée manuellement dans `.env.local` sous le même nom canonique.
-
----
-
-## Validation
-
-Pour vérifier que le projet respecte les invariants :
-
-```bash
-make check
-```
-
----
-
-## Règle importante
-
-Les commandes Docker Compose ne devraient pas être tapées directement dans l’usage courant.
-
-Utiliser le `Makefile`, qui appelle les scripts standards :
-
-```bash
-make init
-make up
-make down
-make rebuild
-make migrate
-make logs
-make ps
-make backup
-make restore
-make update
-```
-
----
-
-## Notes pour Codex
-
-Codex doit respecter les règles suivantes :
-
-* ne pas modifier `APP_NO` sans demande explicite ;
-* ne pas écrire de secret dans Git ;
-* ne pas hardcoder les ports ;
-* utiliser les scripts standards ;
-* respecter `INVARIANTS.md` ;
-* conserver `.env.local` hors versionnement.
-
 ---
 
 ## Démarrage manuel équivalent
@@ -370,6 +317,12 @@ Codex doit respecter les règles suivantes :
 ./scripts/ps.sh
 ```
 
+Avec matérialisation explicite :
+
+```bash
+APP_TEMPLATE_MATERIALIZE=1 ./scripts/init.sh
+```
+
 Une mise à jour manuelle équivalente à `make update` correspond à :
 
 ```bash
@@ -381,3 +334,17 @@ git pull --ff-only
 ./scripts/migrate.sh
 ./scripts/ps.sh
 ```
+
+---
+
+## Intégration facultative avec DocForge
+
+DocForge peut analyser une application après sa matérialisation et lire `.app-template/origin.json` pour identifier le modèle d’origine.
+
+DocForge n’est pas requis pour :
+
+* `make init` ;
+* `make up` ;
+* `make migrate` ;
+* `make check` ;
+* la matérialisation du template.

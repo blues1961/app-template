@@ -2,7 +2,7 @@
 
 Application générée à partir du template applicatif standard.
 
-Ce projet respecte les invariants définis dans `INVARIANTS.md` et utilise une structure commune pour faciliter le développement, le déploiement et la maintenance.
+Ce dépôt reste autonome : `app-template` gère lui-même la matérialisation, l’identité du projet, les métadonnées de provenance, les protections Git et la validation structurelle. Un outil externe comme DocForge peut lire ces métadonnées après coup, mais il n’est pas requis pour créer, démarrer ou vérifier l’application.
 
 ---
 
@@ -24,6 +24,7 @@ Ce projet sert de base pour une application auto-hébergée avec :
 
 ```text
 .
+├── .app-template/
 ├── backend/
 ├── frontend/
 ├── docs/
@@ -37,21 +38,40 @@ Ce projet sert de base pour une application auto-hébergée avec :
 └── CODEX_START.md
 ```
 
+`.app-template/` contient les métadonnées permanentes du modèle :
+
+```text
+.app-template/template.json   Dépôt source du template
+.app-template/origin.json     Application matérialisée
+```
+
+Le dépôt ne doit jamais contenir les deux à la fois.
+
 ---
 
 ## Démarrage rapide
 
-Pour démarrer en développement :
+Dans une copie du template :
 
 ```bash
+cp .env.template.example .env.template
+make dev
 make init
 ```
 
-Voir les détails dans :
+Si la copie est destinée à devenir une application indépendante, utiliser le flux de matérialisation :
 
-```text
-README_DEV.md
+```bash
+APP_TEMPLATE_MATERIALIZE=1 make init
 ```
+
+Pour détacher explicitement l’historique Git après matérialisation :
+
+```bash
+APP_TEMPLATE_MATERIALIZE=1 APP_TEMPLATE_DETACH_GIT=1 make init
+```
+
+Voir les détails dans `README_DEV.md`.
 
 ---
 
@@ -61,6 +81,9 @@ Les opérations courantes passent par les scripts du dossier `scripts/` :
 
 ```bash
 ./scripts/init.sh
+./scripts/generate-env.sh
+./scripts/generate-secrets.sh
+./scripts/materialize-application.py
 ./scripts/up.sh
 ./scripts/down.sh
 ./scripts/restart.sh
@@ -98,31 +121,40 @@ make update
 Le projet utilise :
 
 ```text
+.env.template
 .env.dev
 .env.prod
 .env.local
 .env
 ```
 
-`.env.local` contient les secrets et ne doit jamais être commité.
-
 Rôle des fichiers :
 
 ```text
-.env.dev      Variables non secrètes pour le développement
-.env.prod     Variables non secrètes pour la production
-.env.local    Secrets locaux non versionnés
-.env          Lien symbolique vers .env.dev ou .env.prod
-```
-
-En usage normal :
-
-```bash
-make dev
-make prod
+.env.template  Identité locale du projet avant génération
+.env.dev       Variables non secrètes pour le développement
+.env.prod      Variables non secrètes pour la production
+.env.local     Secrets locaux non versionnés
+.env           Lien symbolique vers .env.dev ou .env.prod
 ```
 
 Le template s’appuie sur l’environnement actif pointé par `.env` pour les commandes de maintenance comme `make migrate`, `make backup`, `make restore` et `make update`.
+
+---
+
+## Métadonnées du template
+
+Le cycle de vie appartient à `app-template`.
+
+* `.app-template/template.json` décrit le dépôt source du modèle.
+* `.app-template/origin.json` conserve la provenance du modèle après matérialisation.
+* la matérialisation remplace les placeholders `__APP_NAME__` et `__APP_SLUG__`.
+* les protections empêchent la coexistence d’un état template et d’un état application.
+
+Compatibilité héritée :
+
+* `DOCFORGE_INIT_APPLICATION` et `DOCFORGE_DETACH_GIT` restent temporairement acceptées avec avertissement ;
+* `docforge.template.json` et `docforge.project.json` sont encore lus à titre de compatibilité, mais le format canonique est désormais `.app-template/*`.
 
 ---
 
@@ -135,6 +167,12 @@ make rebuild
 make up
 make migrate
 make ps
+```
+
+Validation structurelle :
+
+```bash
+make check
 ```
 
 Backup PostgreSQL :
@@ -157,34 +195,29 @@ Attention :
 * la restauration échoue au premier problème PostgreSQL ;
 * il est recommandé de faire un `make backup` avant toute restauration.
 
-Mise à jour applicative standard :
-
-```bash
-make update
-```
-
-La cible `update` exécute :
-
-1. `make backup`
-2. `git pull --ff-only`
-3. `make check`
-4. `make rebuild`
-5. `make up`
-6. `make migrate`
-7. `make ps`
-
-Cette procédure fonctionne en développement et en production tant que `.env` pointe vers le bon environnement et que le dépôt Git local est dans un état compatible avec `git pull --ff-only`.
-
 ---
 
 ## Documentation
 
-* `README_DEV.md` : démarrage local et commandes développeur
+* `README_DEV.md` : démarrage local, matérialisation et commandes développeur
 * `INVARIANTS.md` : conventions obligatoires du projet
 * `AGENTS.md` : instructions générales pour les agents IA
 * `CODEX_START.md` : point de départ pour Codex
-* `docs/THEME.md` : thème commun, assets partagés et structure de login
 * `docs/` : documentation complémentaire
+
+---
+
+## Intégration facultative avec DocForge
+
+DocForge peut analyser une application après sa matérialisation et lire les métadonnées génériques produites par `app-template`.
+
+DocForge n’est pas requis pour :
+
+* créer l’application ;
+* générer les environnements ;
+* détacher Git ;
+* démarrer les services ;
+* lancer `make check`.
 
 ---
 

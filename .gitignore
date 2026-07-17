@@ -12,3 +12,4 @@ __pycache__/
 backup/*
 !backup/.gitkeep
 .project-assistant/
+.docforge/

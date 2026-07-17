@@ -485,3 +485,30 @@ venv/
 Ce fichier est la source d’autorité opérationnelle du projet.
 
 La documentation Obsidian peut expliquer les règles, mais ne les remplace pas.
+
+---
+
+## 6. Métadonnées de matérialisation
+
+Le cycle de vie du template appartient à `app-template`.
+
+Structure canonique :
+
+```text
+.app-template/template.json
+.app-template/origin.json
+```
+
+Règles :
+
+* le dépôt source du modèle doit contenir `.app-template/template.json` ;
+* une application matérialisée doit contenir `.app-template/origin.json` ;
+* un même dépôt ne doit jamais contenir simultanément un état template et un état application ;
+* les métadonnées doivent rester lisibles par un outil externe sans dépendre de cet outil ;
+* les métadonnées ne doivent contenir aucun secret ;
+* la provenance du modèle doit au minimum conserver `template_id`, `template_version` et `base_profile`.
+
+Compatibilité héritée :
+
+* `docforge.template.json` et `docforge.project.json` peuvent être lus temporairement pour migrer des dépôts existants ;
+* ils sont dépréciés et ne doivent plus être produits par le flux principal.

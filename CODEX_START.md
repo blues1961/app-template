@@ -384,3 +384,17 @@ Si le code contredit un invariant, corrige le code. Ne modifie pas l’invariant
 
 Une évolution possible d’un invariant doit être présentée comme une proposition distincte et ne doit pas être appliquée sans validation explicite.
 
+
+---
+
+## Matérialisation du template
+
+Le cycle de vie du dépôt appartient à `app-template`.
+
+Règles :
+
+* la matérialisation d’une copie du modèle s’effectue avec `APP_TEMPLATE_MATERIALIZE=1 make init` ;
+* le détachement Git n’est autorisé que si `APP_TEMPLATE_DETACH_GIT=1` est fourni explicitement ;
+* les métadonnées canoniques sont `.app-template/template.json` pour le dépôt source et `.app-template/origin.json` pour une application matérialisée ;
+* DocForge est une intégration facultative de lecture et ne doit pas être requis pour créer ou vérifier l’application ;
+* les variables historiques `DOCFORGE_*` ne relèvent plus du flux principal et ne doivent être conservées qu’en compatibilité héritée.

@@ -10,7 +10,7 @@ help:
 		'' \
 		'Cibles disponibles :' \
 		'  help      Affiche cette aide' \
-		'  init      Initialise le projet dans l’environnement pointé par .env (scripts/init.sh)' \
+		'  init      Initialise le projet et matérialise l’application si APP_TEMPLATE_MATERIALIZE=1' \
 		'  dev       Bascule l’environnement actif vers .env.dev' \
 		'  prod      Bascule l’environnement actif vers .env.prod' \
 		'  up        Démarre les services de l’environnement actif' \
@@ -19,11 +19,18 @@ help:
 		'  rebuild   Reconstruit les images (optionnel : make rebuild SERVICE=backend)' \
 		'  logs      Affiche les logs (optionnel : make logs SERVICE=backend)' \
 		'  ps        Affiche l’état des services de l’environnement actif' \
-		'  check     Vérifie les invariants du template' \
+		'  check     Vérifie les invariants structurels app-template' \
 		'  migrate   Applique les migrations Django dans l’environnement actif' \
 		'  update    Met à jour l’application dans l’environnement actif' \
 		'  backup    Crée un backup PostgreSQL dans ./backup' \
 		'  restore   Restaure un backup PostgreSQL' \
+		'' \
+		'Variables utiles pour make init :' \
+		'  APP_TEMPLATE_MATERIALIZE=1   Transforme une copie du template en application' \
+		'  APP_TEMPLATE_DETACH_GIT=1    Réinitialise un nouveau dépôt Git après matérialisation' \
+		'' \
+		'Compatibilité héritée :' \
+		'  DOCFORGE_INIT_APPLICATION et DOCFORGE_DETACH_GIT sont encore acceptées avec avertissement' \
 		'' \
 		'Options pour restore :' \
 		'  make restore' \

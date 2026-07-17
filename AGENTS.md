@@ -604,3 +604,16 @@ Lorsqu’un projet ne respecte pas un invariant, l’agent doit corriger le proj
 
 Toute proposition d’évolution d’un invariant doit être présentée séparément, avec sa justification, ses impacts et les migrations nécessaires. Elle ne doit jamais être appliquée automatiquement.
 
+
+---
+
+## Métadonnées du template
+
+Le cycle de vie du dépôt est possédé par `app-template`.
+
+Règles :
+
+* utiliser le vocabulaire `APP_TEMPLATE_MATERIALIZE` et `APP_TEMPLATE_DETACH_GIT` pour le flux normal ;
+* considérer `.app-template/template.json` et `.app-template/origin.json` comme les métadonnées canoniques ;
+* ne pas réintroduire une dépendance obligatoire à DocForge dans la matérialisation, l’identité du projet, le remplacement des marqueurs ou `make check` ;
+* traiter `DOCFORGE_*` et `docforge.*.json` comme une compatibilité héritée, jamais comme l’architecture cible.

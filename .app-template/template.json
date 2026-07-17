@@ -1,5 +1,6 @@
 {
   "schema_version": 1,
+  "metadata_kind": "app-template-source",
   "template_id": "app-template",
   "project_kind": "application-template",
   "base_profile": "django-react",
